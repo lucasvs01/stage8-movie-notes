@@ -1,0 +1,17 @@
+{
+  "name": "stage8-movie-notes",
+  "version": "1.0.0",
+  "description": "Projeto que criamos como desafio no Stage 8 do Explorer,",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "dev": "nodemon ./src/server.js"
+  },
+  "keywords": [],
+  "author": "Lucas Vilaça",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^3.0.1"
+  }
+}
