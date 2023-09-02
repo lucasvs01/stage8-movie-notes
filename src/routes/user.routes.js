@@ -1,10 +1,12 @@
 const { Router } = require("express");
+const UserController = require("../Controllers/user.Controllers");
 
 const userRoutes = Router();
 
-userRoutes.get("/", (request, response) => {
-    return response.status(200).json("Deu certo a segunda rota")
-} );
+const userController = new UserController;
+
+
+userRoutes.get("/", userController.create);
 
 module.exports = userRoutes;
 
