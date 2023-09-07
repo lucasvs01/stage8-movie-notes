@@ -1,4 +1,4 @@
-require("express-async-errors");
+ require("express-async-errors")// Biblioteca que cuida do tratamento dos erros
 
 const express = require("express"); 
 
@@ -6,9 +6,13 @@ const routes = require("./routes")
 
 const appError = require("./Utils/AppError")
 
+const migrationsRun = require("./database/sqlite/migrations")
+
 const app = express();
 
 const PORT = 4000;
+
+migrationsRun() 
 
 app.use(express.json())/**transforma a resposta em json*/
 app.use(routes)

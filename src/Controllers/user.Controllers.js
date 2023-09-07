@@ -1,21 +1,31 @@
 const AppError = require("../Utils/AppError");
+const sqliteConnection = require("../database/sqlite");
+const { hash, compare } = require("bcrypt")
+
 
 class UserController {
-  create (request, response) {
+  async create (request, response) {
 
-        const { name, email } = request.body;
-        const { user_id } = request.params;
+      const { name, email} = request.body;
 
-        if(!name) {
-           throw new AppError("O nome é obrigatório")
-        }
+      let { password } = request.body;
 
-        return response.status(200).json({
-            "name": name,
-            "email": email,
-            "user_id": user_id
-        })
+      password = await hash(password, 8);
 
+      const database = await sqliteConnection();
+
+      const ifEmailExists = await database.get('SELECT email FROM users WHERE email = (?) ', [email])
+      const ifNameExists = await database.get('SELECT name FROM users WHERE name = (?) ', [name])
+
+      if(ifEmailExists){
+        throw new AppError("Esse e-mail já está em uso.")
+      }else if(ifNameExists){
+        throw new AppError("Esse nome já está em uso.")
+      }
+
+      await database.get('INSERT INTO users (name, email, password) VALUES ((?), (?), (?))', [name, email, password])
+
+      response.status(200).json()
 
     }
 }
