@@ -1,4 +1,5 @@
  require("express-async-errors")// Biblioteca que cuida do tratamento dos erros
+ require("dotenv/config")
 
 const express = require("express"); 
 
@@ -13,7 +14,7 @@ const  uploadConfigs  = require("./configs/upload");
 
 const app = express();
 
-const PORT = 4000;
+const PORT = process.env.PORT || 5000;
 
 migrationsRun() 
 
