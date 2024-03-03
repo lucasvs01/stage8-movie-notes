@@ -30,7 +30,7 @@ class UserController {
     }
 
   async update (request, response) {
-    const { user_id } = request.params;
+    const user_id = request.user.id;
     const { name, email, password, old_password} = request.body;
     const database = await sqliteConnection(); 
 
@@ -41,7 +41,6 @@ class UserController {
     }
 
     const userWithUpdatedEmail = await database.get("SELECT * FROM users WHERE email=(?)", [email])
-    console.log(userWithUpdatedEmail)
 
     if(userWithUpdatedEmail && userWithUpdatedEmail.id !== user.id){
       throw new AppError("Esse email já está em uso")

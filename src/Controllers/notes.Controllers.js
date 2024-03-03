@@ -4,11 +4,12 @@ const AppError = require("../Utils/AppError")
 
 class notesControllers {
     async create (request, response){
-        const { user_id } = request.params;
+        const  user_id  = request.user.id;
         const { title, description, rating, tags } = request.body;
 
-        if(rating > 5 || rating < 1){
-            throw new AppError("Digite uma nota entre 1 e 5")
+
+        if(rating > 5 || rating < 0){
+            throw new AppError("Digite uma nota entre 0 e 5")
         }
 
        const [note_id] = await knex("movie_notes").insert({
@@ -26,7 +27,6 @@ class notesControllers {
             }
         })
 
-        console.log(insertTags)
         
         await knex("movie_tags").insert(insertTags)
         
@@ -56,26 +56,21 @@ class notesControllers {
     }
 
     async index (request, response){
-        const { user_id, title, tags } = request.query;
+        const { title } = request.query;
 
+        const user_id = request.user.id;
         let notes;
 
-        if(tags){
-            const filteredTags = tags.split(",").map(tag => tag)
 
-            notes = await knex("movie_tags")
-            .select("movie_notes.id",
-            "movie_notes.title",
-            "movie_notes.user_id")
-            .where("movie_notes.user_id", user_id)
-            .whereLike("movie_notes.title", `%${title}%`)
-            .whereIn("name", filteredTags)
-            .innerJoin("movie_notes", "movie_notes.id", "movie_tags.note_id")
-            .orderBy("movie_notes.title")
+        if(title === undefined){
 
-        }else(
+                notes = await knex("movie_notes").where({user_id}).orderBy("title")
+                
+        }else{
             notes = await knex("movie_notes").where({user_id}).orderBy("title").whereLike("title", `%${title}%`)
-        )
+        }
+        
+
         
         const userTags = await knex("movie_tags").where({user_id})
         const notesWithTags = notes.map(note => {

@@ -4,9 +4,12 @@ const express = require("express");
 
 const routes = require("./routes")
 
+const cors = require("cors")
+
 const appError = require("./Utils/AppError")
 
-const migrationsRun = require("./database/sqlite/migrations")
+const migrationsRun = require("./database/sqlite/migrations");
+const  uploadConfigs  = require("./configs/upload");
 
 const app = express();
 
@@ -15,7 +18,13 @@ const PORT = 4000;
 migrationsRun() 
 
 app.use(express.json())/**transforma a resposta em json*/
+
+app.use("/files", express.static(uploadConfigs.UPLOAD_FOLDER))
+
+app.use(cors())
+
 app.use(routes)
+
 
 app.use((error, request , response, next) => {
     if(error instanceof appError){ /**Erro do user */
